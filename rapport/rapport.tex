@@ -1,0 +1,181 @@
+\documentclass[a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[francais]{babel}
+\usepackage[hidelinks]{hyperref}
+\usepackage{graphicx}
+
+\title{CPA - Graphes de terrain}
+\author{Basile Pesin\\Sorbonne Université}
+
+\begin{document}
+\maketitle
+
+\chapter{Introduction aux graphes de terrain (TME3)}
+
+\section{To get things started}
+
+\subsection*{Cleaning data}
+Pour nettoyer (en particulier le graphe des emails) on commence par classer sur chaque ligne le plus petit numéro suivi du plus grand, grace au programme décrit dans \textit{inner-sort.c}. On classe ensuite chaque ligne et supprime les doublons avec la commande \textbf{sort -n -t " " -k1,1 -k2,2 -u email-Eu-core.txt -o email-Eu-core.out.txt}.
+
+\subsection*{Size of the graph}
+Les taille des graphes (que ce soit en nombre de noeuds ou d'arètes) sont bien conformes à celles données sur \url{https://snap.stanford.edu/}. On constate une petite différence en terme de nonmbre de noeuds, qui est du au fait qu'on prend en compte les noeuds n'apparaissant dans aucune arète (on se base sur l'identifiant du noeud) contrairement aux chiffres donnés par Stanford.
+
+\subsection*{A special quantity}
+On trouvera dans le tableau suivant les quantités $Q_g$ et les temps d'exécutions $T_g$ pour les cinq graphes proposés.
+
+\begin{tabular}{|l|l|l|}
+  \hline
+  G & $Q_g$ & $T_g$ \\
+  \hline
+  email-EU-core & 94487825 & 9ms\\
+  Amazon & 103415531 & 426ms \\
+  LiveJournal & 789000450609 & 14s \\
+  Orkut & 22292678512329 & 47s \\
+  Friendster & 379856554324947 & 15min \\
+  \hline
+\end{tabular}\\
+On constate que le temps d'exécution pour le graphe de friendster est très important. Dans certaines des questions suivantes, on ne traitera pas ce graphe (par manque de temps).
+
+\subsection*{Degree distribution}
+On trouvera ci-dessous les distributions de degrés pour les cinq graphes proposés.
+\begin{center}
+  \includegraphics[height=.25\paperwidth]{assets/email-EU-core-dist.png}
+  \includegraphics[height=.25\paperwidth]{assets/com-amazon-dist.png}
+  \includegraphics[height=.25\paperwidth]{assets/com-lj-dist.png}
+  \includegraphics[height=.25\paperwidth]{assets/com-orkut-dist.png}\\
+\end{center}
+On constate qu'il y a énormément de noeuds avec un degré très faible, et très peu avec un fort degré (ce qui était une propriété predictible des graphes de terrains).
+
+\section{Load a graph in memory}
+On trouvera ci-dessous la taille en mémoire mesurée pour les trois structures de données et les cinq graphes proposés.
+
+\begin{tabular}{|l|l|l|l|}
+  \hline
+  G & egde list & adjacency matrix & adjacency array \\
+  \hline
+  email-EU-core & 133ko & 4Mo & 70ko \\
+  Amazon & 7Mo & Trop & 5Mo \\
+  LiveJournal & 270Mo & Trop & 154Mo \\
+  Orkut & 1Go & Trop & 500Mo \\
+  Friendster & Trop & Trop & Trop \\
+  \hline
+\end{tabular}\\
+On constate très vite que la structure matrice d'adjacence est impraticable pour de tels graphes, puisque sa taille croit quadratiquement par rapport au nombre de noeuds du graphes (on peut calculer par exemple que pour le graphe Amazon, le plus petit de nos grands graphes, sa taille serait de $n^2 \times sizeof(int)$, soit sur mon architecture $334863^2 \times 4 \simeq 450Go$). Pour ce qui est des autres structures de données, on constate que le tableau d'adjacence est un peu plus efficace que la liste d'aretes (d'un facteur 2). Etant donné que cette structure propose aussi une meilleure efficacité pour beaucoup de problèmes, on aura tendance à la préférer dans la suite, sauf cas particulier.\\
+Dans le cas particulier du graphe de Friendster, le graphe est trop grand pour tenir dans la RAM de mon ordinateur portable, quelque soit la structure de données utilisée. On note que la taille thèorique de l'adjacency array pour ce graphe serait de l'ordre de $2\times m \times sizeof(unsigned\,int)$ soit sur mon architecture $2 \times 1806067135 \times 4 \simeq 14.5Go$. Cela nous fait une raison de plus pour ignorer ce graphe dans les prochaines questions.
+
+\section{Breadth-first search and diameter}
+
+La fraction des nodes dans la plus grand composante connectée est bien celle qu'on s'attendait à trouver, à savoir:\\
+\begin{tabular}{|l|l|}
+  \hline
+  G & node dans la WCC \\
+  \hline
+  email-EU-core & 0.981\\
+  Amazon & 1.000\\
+  LiveJournal & 1.000\\
+  Orkut & 1.000\\
+  \hline
+\end{tabular}\\
+
+Pour ce qui est des diametres, on a tendance à trouver des bornes inférieures un peu plus grandes que celles prévues sur \url{https://snap.stanford.edu}, à savoir:\\
+\begin{tabular}{|l|l|}
+  \hline
+  G & borne inf du diametre \\
+  \hline
+  email-EU-core & 7\\
+  Amazon & 48\\
+  LiveJournal & 22\\
+  Orkut & 10\\
+  \hline
+\end{tabular}\\
+
+\section{Listing triangles}
+On prends seulement en compte dans le temps d'exécution la partie calcul de triangles proprement dite, et pas le chargement du graphe. On trouve alors les nombres de triangles et les temps de calcul suivants:\\
+\begin{tabular}{|l|l|l|l|l|}
+  \hline
+  G & nombre de triangles & temps d'exécutation & transitivity & clustering\\
+  \hline
+  email-EU-core & 107124 & 68ms & 0.128 & 0.310\\
+  Amazon & 667129 & 635ms & 0.094 & 0.276\\
+  LiveJournal & 177820130 & 200s & 0.032 & 0.22\\
+  Orkut & 627584181 & 28min & 0.0145 & 0.125920\\
+  \hline
+\end{tabular}\\
+
+\chapter{Detection de communautés (TME4)}
+
+\section{Simple benchmark}
+
+\begin{center}
+  \begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.3\paperwidth]{assets/0101.png}\\
+    \caption*{$p=0.01, q=0.01$}
+  \end{figure}
+  \begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.3\paperwidth]{assets/01001.png}\\
+    \caption*{$p=0.01, q=0.001$}
+  \end{figure}
+  \begin{figure}[!h]
+    \centering
+    \includegraphics[width=0.3\paperwidth]{assets/01000001.png}\\
+    \caption*{$p=0.1, q=10^-6$}
+  \end{figure}
+\end{center}
+
+On se rends aisément compte que plus le ration $p/q$ augmente, plus les communautés sont éloignées les unes des autres mais fortement connectée en interne. On peut alors s'attendre à ce qu'une communauté avec un ration $p/q$ élevé (telle que la troisième représentée ci-contre) soit plus facile à detecter.
+
+\section{Label propagation}
+En reprenant les graphes précédants:
+
+\begin{center}
+  \includegraphics[width=0.3\paperwidth]{assets/0101coms.png}\\
+  \includegraphics[width=0.3\paperwidth]{assets/01001coms.png}\\
+  \includegraphics[width=0.3\paperwidth]{assets/01000001coms.png}\\
+\end{center}
+
+On remarque que même si l'algorithme de propagation de labels est plutôt efficace pour les cas ``triviaux'' 1 et 3, il présente quelques difficultés pour correctement délimiter les communautés du deuxième exemple.
+
+\begin{center}
+  \includegraphics[width=0.6\paperwidth]{assets/histSizes.png}
+\end{center}
+
+En exécutant l'algorithme sur le graphe de youtube, on remarque que la grande majorité des graphes de terrains sont de petite taille, et que les très grandes communautés sont assez rare (encore un exemple de la loi des puissances).\\
+
+\begin{center}
+  \includegraphics[width=0.6\paperwidth]{assets/nbComs.png}
+\end{center}
+
+En exécutant ce code 100 fois (pas 1000, par manque de temps principalement), on remarque que le résultat varie malgré tout (puisque l'algorithme de propagation n'est pas deterministe) entre 26000 et 34000 (soit un écart de $25\%$). Cet écart étant très important, on peut donc en conclure que cet algorithme n'est pas très efficace, puisque trop influencé par le hasard.
+
+\section{New algorithm}
+On implémente un algorithme par division, dans lequel la force d'un lien entre les noeuds $u$ et $v$ est le nombre de voisins en commun de $u$ et $v$. On répète cet algorithme en ne gardant que les liens de force supérieure à $\frac{maxForce}{10}$ (plutôt bonne valeur trouvée experimentalement en testant plusieurs valeurs), tout en mettant bien sur à jour les forces des liens au fur et à mesure. On construit ensuite les communautés par liens toujours connectés (en faisant un BFS donc).\\
+L'algorithme est implémenté dans le fichier \textit{exo4.cpp}.
+
+\begin{center}
+  \includegraphics[width=0.6\paperwidth]{assets/exo4.png}
+\end{center}
+
+Comme on le voit dans la figure ci dessus (générée par notre benchmark de l'exercice 1 avec $p = 0.5$ et $q = 0.001$) l'algorithme fonctionne plutôt bien avec des valeurs de p et q très prononcées. C'est moins le cas si ces valeurs sont plus proches. Cela dit, cet algorithme dépend beaucoup du nombre de triangles présents dans le graphe. On peut donc se dire que dans un graphe réel, qui contiendra plus de triangles que le notre (puisque la benchmark n'a pas tendance à en générer) l'algorithme fonctionnera mieux.
+
+\section{Validation}
+
+On a mesuré les temps d'exécution au moyen de la command $time$, ce qui signifie que les temps mesurés prennent en compte le temps d'ouverture et de lecture du graphe. Etant donné que le programme $louvain$ prends en entrée un fichier binaire déjà optimisé, on peut s'attendre à ce que les résultats soient un peu faussés en faveur de Louvain.
+
+\begin{tabular}{|l|l|l|l|}
+  \hline
+  Algorithme & Label Propagation & Louvain & Mon algorithme\\
+  \hline
+  Benchmark (n = 10000) & 0.45s & 0.05s & 5.03s\\
+  Amazon (n = 334863) & 4.46s & 5.11s & 30.21s\\
+  Youtube (n = 1134890) & 17s & 11.06s & 7min\\
+  \hline
+\end{tabular}
+
+On constate que l'algorithme réalisé ne passe pas bien à l'echelle (cela est principalement du aux bfs nécessaires pour reformer les communautés à la fin de l'algorithme). On pourrait améliorer cet algorithme en utilisant une structure de donnée union-find.
+
+\chapter{PageRank (TME5)}
+
+\end{document}
