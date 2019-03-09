@@ -1,6 +1,7 @@
 #include <vector>
 #include <algorithm>
 #include "structs.h"
+#include <string.h>
 
 std::map<unsigned int, unsigned int> *reverseMap(std::map<unsigned int, unsigned int> *map) {
   std::map<unsigned int, unsigned int>  *revMap = new std::map<unsigned int, unsigned int>();
@@ -10,18 +11,20 @@ std::map<unsigned int, unsigned int> *reverseMap(std::map<unsigned int, unsigned
   return revMap;
 }
 
-void matVectProd(adjArray *arr, double *P) {
-  double *B = (double *)malloc(arr->n*sizeof(double));
-  for(int i = 0; i < arr->n; i++) B[i] = 0;
-  for(int i = 0; i < arr->n; i++) {
-    for(int j = arr->cd[i]; j < arr->cd[i+1]; j++) {
-      int nj = arr->adj[j];
-      int deg = (arr->cd[i+1]-arr->cd[i]);
-      B[nj] += P[i]/(double)deg;
-    }
+void matVectProd(char *fn, std::map<unsigned int, unsigned int> *map, int *degs, int n, double *P) {
+  double *B = (double *)malloc(n*sizeof(double));
+  for(int i = 0; i < n; i++) B[i] = 0;
+  FILE *f = fopen(fn, "r");
+  char line[128];
+  while(fgets(line, sizeof line, f) != NULL) {
+    if(line[0] == '#') continue;
+    unsigned int nl = (*map)[atoi(strtok(line, " \t"))];
+    unsigned int nr = (*map)[atoi(strtok(NULL, " \t"))];
+    B[nr] += P[nl]/(double)degs[nl];
   }
+  fclose(f);
 
-  for(int i = 0; i < arr->n; i++) P[i] = B[i];
+  for(int i = 0; i < n; i++) P[i] = B[i];
   free(B);
 }
 
@@ -33,18 +36,19 @@ void normalize2(double *P, int n) {
   }
 }
 
-double *pagerank(adjArray *arr, double alpha, int t) {
-  double *ranks = (double *)malloc(arr->n*sizeof(double));
-  for(int i = 0; i < arr->n; i++) {
-    ranks[i] = (double)1/(double)arr->n;
+double *pagerank(char *fn, std::map<unsigned int, unsigned int> *map, int *degs, double alpha, int n, int t) {
+  double *ranks = (double *)malloc(n*sizeof(double));
+  for(int i = 0; i < n; i++) {
+    ranks[i] = (double)1/(double)n;
   }
 
   for(int i = 0; i < t; i++) {
-    matVectProd(arr, ranks);
-    for(int j = 0; j < arr->n; j++) {
-      ranks[j] = (1 - alpha)*ranks[j] + alpha * ((double)1/(double)arr->n);
+    printf("Itération %d\n", i);
+    matVectProd(fn, map, degs, n, ranks);
+    for(int j = 0; j < n; j++) {
+      ranks[j] = (1 - alpha)*ranks[j] + alpha * ((double)1/(double)n);
     }
-    normalize2(ranks, arr->n);
+    normalize2(ranks, n);
   }
 
   return ranks;
@@ -70,14 +74,13 @@ int main(int argc, char **argv) {
   std::map<unsigned int, unsigned int> *map = size(inName, &nbNodes, &nbEdges);
   std::map<unsigned int, unsigned int> *revMap = reverseMap(map);
 
-  adjArray *arr = loadAsAdjArray(inName, nbNodes, nbEdges, map);
-  printf("Loaded graph\n");
+  int *degs = degrees(inName, nbNodes, map);
 
-  double *ranks = pagerank(arr, 0.2, 20);
+  double *ranks = pagerank(inName, map, degs, 0.2, nbNodes, 20);
   printf("Calculated ranks\n");
 
-  std::vector<std::pair<unsigned int, double>> rankMap(arr->n);
-  for(int i = 0; i < arr->n; i++) {
+  std::vector<std::pair<unsigned int, double>> rankMap(nbNodes);
+  for(int i = 0; i < nbNodes; i++) {
     rankMap[i] = std::pair<unsigned int, double>((*revMap)[i], ranks[i]);
   }
 
@@ -96,10 +99,9 @@ int main(int argc, char **argv) {
 
   printf("Flop 5:\n");
   for(int i = 0; i < 5; i++) {
-    printf("%d\n", rankMap[arr->n-(i+1)].first);
+    printf("%d\n", rankMap[nbNodes-(i+1)].first);
   }
 
-  freeAdjArray(arr);
   free(ranks);
   delete map; delete revMap;
   return 0;

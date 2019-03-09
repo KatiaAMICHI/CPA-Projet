@@ -17,7 +17,8 @@ void matVectProd(adjArray *arr, double *P) {
     for(int j = arr->cd[i]; j < arr->cd[i+1]; j++) {
       int nj = arr->adj[j];
       int deg = (arr->cd[i+1]-arr->cd[i]);
-      B[nj] += P[i]/(double)deg;
+      if(deg == 0) B[nj] += P[i]/(double)arr->n;
+      else B[nj] += P[i]/(double)deg;
     }
   }
 
@@ -25,15 +26,15 @@ void matVectProd(adjArray *arr, double *P) {
   free(B);
 }
 
-void normalize2(double *P, int n) {
+void normalize2(double *P, int n, double *p0) {
   double norme = 0;
   for(int i = 0; i < n; i++) norme += P[i];
   for(int i = 0; i < n; i++) {
-    P[i] += (1-norme)/(double)n;
+    P[i] += p0[i]*(1-norme);
   }
 }
 
-double *pagerank(adjArray *arr, double alpha, int t) {
+double *perspagerank(adjArray *arr, double *p0, double alpha, int t) {
   double *ranks = (double *)malloc(arr->n*sizeof(double));
   for(int i = 0; i < arr->n; i++) {
     ranks[i] = (double)1/(double)arr->n;
@@ -42,9 +43,9 @@ double *pagerank(adjArray *arr, double alpha, int t) {
   for(int i = 0; i < t; i++) {
     matVectProd(arr, ranks);
     for(int j = 0; j < arr->n; j++) {
-      ranks[j] = (1 - alpha)*ranks[j] + alpha * ((double)1/(double)arr->n);
+      ranks[j] = (1 - alpha)*ranks[j] + alpha * p0[j];
     }
-    normalize2(ranks, arr->n);
+    normalize2(ranks, arr->n, p0);
   }
 
   return ranks;
@@ -73,7 +74,11 @@ int main(int argc, char **argv) {
   adjArray *arr = loadAsAdjArray(inName, nbNodes, nbEdges, map);
   printf("Loaded graph\n");
 
-  double *ranks = pagerank(arr, 0.2, 20);
+  double *p0 = (double*) malloc(nbNodes*sizeof(double));
+  for(int i = 0; i < nbNodes; i++) p0[i] = 0;
+  p0[(*map)[5843419]] = 1; // France
+
+  double *ranks = perspagerank(arr, p0, 0.2, 20);
   printf("Calculated ranks\n");
 
   std::vector<std::pair<unsigned int, double>> rankMap(arr->n);

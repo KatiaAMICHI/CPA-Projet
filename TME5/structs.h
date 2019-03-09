@@ -15,6 +15,7 @@ unsigned int sizeofAdjArray(adjArray*);
 void freeAdjArray(adjArray*);
 
 std::map<unsigned int, unsigned int> *size(char*, unsigned int*, unsigned int*);
+int *degrees(char *fn, unsigned int n, std::map<unsigned int, unsigned int> *m);
 adjArray *loadAsAdjArray(char*, int, int, std::map<unsigned int, unsigned int>*);
 
 #endif

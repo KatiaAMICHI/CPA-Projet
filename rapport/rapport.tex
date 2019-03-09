@@ -22,19 +22,21 @@ Pour nettoyer (en particulier le graphe des emails) on commence par classer sur 
 Les taille des graphes (que ce soit en nombre de noeuds ou d'arètes) sont bien conformes à celles données sur \url{https://snap.stanford.edu/}. On constate une petite différence en terme de nonmbre de noeuds, qui est du au fait qu'on prend en compte les noeuds n'apparaissant dans aucune arète (on se base sur l'identifiant du noeud) contrairement aux chiffres donnés par Stanford.
 
 \subsection*{A special quantity}
-On trouvera dans le tableau suivant les quantités $Q_g$ et les temps d'exécutions $T_g$ pour les cinq graphes proposés.
+On trouvera dans le centerau suivant les quantités $Q_g$ et les temps d'exécutions $T_g$ pour les cinq graphes proposés.
 
-\begin{tabular}{|l|l|l|}
-  \hline
-  G & $Q_g$ & $T_g$ \\
-  \hline
-  email-EU-core & 94487825 & 9ms\\
-  Amazon & 103415531 & 426ms \\
-  LiveJournal & 789000450609 & 14s \\
-  Orkut & 22292678512329 & 47s \\
-  Friendster & 379856554324947 & 15min \\
-  \hline
-\end{tabular}\\
+\begin{center}
+  \begin{tabular}{|l|l|l|}
+    \hline
+    G & $Q_g$ & $T_g$ \\
+    \hline
+    email-EU-core & 94487825 & 9ms\\
+    Amazon & 103415531 & 426ms \\
+    LiveJournal & 789000450609 & 14s \\
+    Orkut & 22292678512329 & 47s \\
+    Friendster & 379856554324947 & 15min \\
+    \hline
+  \end{tabular}
+\end{center}
 On constate que le temps d'exécution pour le graphe de friendster est très important. Dans certaines des questions suivantes, on ne traitera pas ce graphe (par manque de temps).
 
 \subsection*{Degree distribution}
@@ -61,47 +63,53 @@ On trouvera ci-dessous la taille en mémoire mesurée pour les trois structures 
   Friendster & Trop & Trop & Trop \\
   \hline
 \end{tabular}\\
-On constate très vite que la structure matrice d'adjacence est impraticable pour de tels graphes, puisque sa taille croit quadratiquement par rapport au nombre de noeuds du graphes (on peut calculer par exemple que pour le graphe Amazon, le plus petit de nos grands graphes, sa taille serait de $n^2 \times sizeof(int)$, soit sur mon architecture $334863^2 \times 4 \simeq 450Go$). Pour ce qui est des autres structures de données, on constate que le tableau d'adjacence est un peu plus efficace que la liste d'aretes (d'un facteur 2). Etant donné que cette structure propose aussi une meilleure efficacité pour beaucoup de problèmes, on aura tendance à la préférer dans la suite, sauf cas particulier.\\
-Dans le cas particulier du graphe de Friendster, le graphe est trop grand pour tenir dans la RAM de mon ordinateur portable, quelque soit la structure de données utilisée. On note que la taille thèorique de l'adjacency array pour ce graphe serait de l'ordre de $2\times m \times sizeof(unsigned\,int)$ soit sur mon architecture $2 \times 1806067135 \times 4 \simeq 14.5Go$. Cela nous fait une raison de plus pour ignorer ce graphe dans les prochaines questions.
+On constate très vite que la structure matrice d'adjacence est impraticable pour de tels graphes, puisque sa taille croit quadratiquement par rapport au nombre de noeuds du graphes (on peut calculer par exemple que pour le graphe Amazon, le plus petit de nos grands graphes, sa taille serait de $n^2 \times sizeof(int)$, soit sur mon architecture $334863^2 \times 4 \simeq 450Go$). Pour ce qui est des autres structures de données, on constate que le centerau d'adjacence est un peu plus efficace que la liste d'aretes (d'un facteur 2). Etant donné que cette structure propose aussi une meilleure efficacité pour beaucoup de problèmes, on aura tendance à la préférer dans la suite, sauf cas particulier.\\
+Dans le cas particulier du graphe de Friendster, le graphe est trop grand pour tenir dans la RAM de mon ordinateur porcenter, quelque soit la structure de données utilisée. On note que la taille thèorique de l'adjacency array pour ce graphe serait de l'ordre de $2\times m \times sizeof(unsigned\,int)$ soit sur mon architecture $2 \times 1806067135 \times 4 \simeq 14.5Go$. Cela nous fait une raison de plus pour ignorer ce graphe dans les prochaines questions.
 
 \section{Breadth-first search and diameter}
 
-La fraction des nodes dans la plus grand composante connectée est bien celle qu'on s'attendait à trouver, à savoir:\\
-\begin{tabular}{|l|l|}
-  \hline
-  G & node dans la WCC \\
-  \hline
-  email-EU-core & 0.981\\
-  Amazon & 1.000\\
-  LiveJournal & 1.000\\
-  Orkut & 1.000\\
-  \hline
-\end{tabular}\\
+La fraction des nodes dans la plus grand composante connectée est bien celle qu'on s'attendait à trouver, à savoir:
+\begin{center}
+  \begin{tabular}{|l|l|}
+    \hline
+    G & node dans la WCC \\
+    \hline
+    email-EU-core & 0.981\\
+    Amazon & 1.000\\
+    LiveJournal & 1.000\\
+    Orkut & 1.000\\
+    \hline
+  \end{tabular}
+\end{center}
 
-Pour ce qui est des diametres, on a tendance à trouver des bornes inférieures un peu plus grandes que celles prévues sur \url{https://snap.stanford.edu}, à savoir:\\
-\begin{tabular}{|l|l|}
-  \hline
-  G & borne inf du diametre \\
-  \hline
-  email-EU-core & 7\\
-  Amazon & 48\\
-  LiveJournal & 22\\
-  Orkut & 10\\
-  \hline
-\end{tabular}\\
+Pour ce qui est des diametres, on a tendance à trouver des bornes inférieures un peu plus grandes que celles prévues sur \url{https://snap.stanford.edu}, à savoir:
+\begin{center}
+  \begin{tabular}{|l|l|}
+    \hline
+    G & borne inf du diametre \\
+    \hline
+    email-EU-core & 7\\
+    Amazon & 48\\
+    LiveJournal & 22\\
+    Orkut & 10\\
+    \hline
+  \end{tabular}
+\end{center}
 
 \section{Listing triangles}
 On prends seulement en compte dans le temps d'exécution la partie calcul de triangles proprement dite, et pas le chargement du graphe. On trouve alors les nombres de triangles et les temps de calcul suivants:\\
-\begin{tabular}{|l|l|l|l|l|}
-  \hline
-  G & nombre de triangles & temps d'exécutation & transitivity & clustering\\
-  \hline
-  email-EU-core & 107124 & 68ms & 0.128 & 0.310\\
-  Amazon & 667129 & 635ms & 0.094 & 0.276\\
-  LiveJournal & 177820130 & 200s & 0.032 & 0.22\\
-  Orkut & 627584181 & 28min & 0.0145 & 0.125920\\
-  \hline
-\end{tabular}\\
+\begin{center}
+  \begin{tabular}{|l|l|l|l|l|}
+    \hline
+    G & nombre de triangles & temps d'exécutation & transitivity & clustering\\
+    \hline
+    email-EU-core & 107124 & 68ms & 0.128 & 0.310\\
+    Amazon & 667129 & 635ms & 0.094 & 0.276\\
+    LiveJournal & 177820130 & 200s & 0.032 & 0.22\\
+    Orkut & 627584181 & 28min & 0.0145 & 0.125920\\
+    \hline
+  \end{tabular}
+\end{center}
 
 \chapter{Detection de communautés (TME4)}
 
@@ -164,18 +172,112 @@ Comme on le voit dans la figure ci dessus (générée par notre benchmark de l'e
 
 On a mesuré les temps d'exécution au moyen de la command $time$, ce qui signifie que les temps mesurés prennent en compte le temps d'ouverture et de lecture du graphe. Etant donné que le programme $louvain$ prends en entrée un fichier binaire déjà optimisé, on peut s'attendre à ce que les résultats soient un peu faussés en faveur de Louvain.
 
-\begin{tabular}{|l|l|l|l|}
-  \hline
-  Algorithme & Label Propagation & Louvain & Mon algorithme\\
-  \hline
-  Benchmark (n = 10000) & 0.45s & 0.05s & 5.03s\\
-  Amazon (n = 334863) & 4.46s & 5.11s & 30.21s\\
-  Youtube (n = 1134890) & 17s & 11.06s & 7min\\
-  \hline
-\end{tabular}
+\begin{center}
+  \begin{tabular}{|l|l|l|l|}
+    \hline
+    Algorithme & Label Propagation & Louvain & Mon algorithme\\
+    \hline
+    Benchmark (n = 10000) & 0.45s & 0.05s & 5.03s\\
+    Amazon (n = 334863) & 4.46s & 5.11s & 30.21s\\
+    Youtube (n = 1134890) & 17s & 11.06s & 7min\\
+    \hline
+  \end{tabular}
+\end{center}
 
 On constate que l'algorithme réalisé ne passe pas bien à l'echelle (cela est principalement du aux bfs nécessaires pour reformer les communautés à la fin de l'algorithme). On pourrait améliorer cet algorithme en utilisant une structure de donnée union-find.
 
 \chapter{PageRank (TME5)}
+
+\section{PageRank (directed graph)}
+
+Les 5 pages avec le plus haut PageRank du graphe (par PageRank décroissant) sont:
+
+\begin{center}
+  \begin{tabular}{|l|l|l|}
+    \hline
+    Rang & Page & PageRank\\
+    \hline
+    $1$ & United States & $2.17\mathrm{e}{-3}$\\
+    $2$ & Square Kilometer & $1.41\mathrm{e}{-3}$\\
+    $3$ & Population Density & $1.32\mathrm{e}{-3}$\\
+    $4$ & Square mile & $1.29\mathrm{e}{-3}$\\
+    $5$ & United States Census Bureau & $1.23\mathrm{e}{-3}$\\
+    \hline
+  \end{tabular}
+\end{center}
+
+D'autre part, les pages avec les rangs les plus faibles (par PageRank croissant) sont:
+
+\begin{center}
+  \begin{tabular}{|l|l|l|}
+    \hline
+    Rang & Page & PageRank\\
+    \hline
+    $n$ & Joseph Ashton & $5.66\mathrm{e}{-7}$\\
+    $n-1$ & Pachypodium lamerei & $5.66\mathrm{e}{-7}$\\
+    $n-2$ & James Dobbin & $5.66\mathrm{e}{-7}$\\
+    $n-3$ & Abipón language & $5.66\mathrm{e}{-7}$\\
+    $n-4$ & Operation Amherst & $5.66\mathrm{e}{-7}$\\
+    \hline
+  \end{tabular}
+\end{center}
+
+On constate que dans, le cas des pages de PageRank fort, les pages sont fortement liées entre elles. En effet les pages Square Kilometer, Population Density, ... sont toutes référencées par la page United States, mais elles sont aussi référencées par beaucoup d'autres pages (sans doute la plupart des pages à contenu géographique), ce qui ajoute à leurs importances. Dans le cas des pages de PageRank faible en revanche, on observe pas de lien à priori entre les pages: ce sont simplement des pages peu (voir pas) référencées.\\
+
+On a obtenu ces résultats avec 20 itérations du PageRank, et on constate qu'augmenter le nombre d'itérations ne change pas les résultats, 20 semble donc être une bonne valeur.
+
+\section{Correlations}
+
+La loi des puissances présentes dans ces graphes fait qu'il est plus intéressants d'utiliser des echelles logarithmiques, c'est donc ce qu'on fera dans les graphiques suivants.
+
+\begin{center}
+  \includegraphics[width=0.25\paperwidth]{assets/pagerankindegs.png}
+  \includegraphics[width=0.25\paperwidth]{assets/pagerankoutdegs.png}
+\end{center}
+
+On remarque que dans le cas des degrés sortants, on a bien une corrélation très forte, ce qui est logique. On remarque cependant que le PageRank n'est pas non plus exactement proportionnel au degré (et heureusement, sinon on se serait embete à faire tout ça alors qu'on aurait pu simplement calculer les degrés).\\
+Dans le cas des degrés sortants en revanche, il n'y a quasiment aucune corrélation.
+
+\begin{center}
+  \includegraphics[width=0.25\paperwidth]{assets/pagerank01.png}
+  \includegraphics[width=0.25\paperwidth]{assets/pagerank02.png}
+  \includegraphics[width=0.25\paperwidth]{assets/pagerank05.png}
+  \includegraphics[width=0.25\paperwidth]{assets/pagerank09.png}
+\end{center}
+
+Comme on pouvait s'y attendre, la corrélation est forte pour des valeurs de alpha proches (et raisonnables) mais s'écroute quand alpha devient trop grand.
+
+\section{PageRank ``sans mémoire''}
+On a implémenté la version du PageRank utilisant moins de mêmoire (mais devant relire le fichier à chaque itération) dans le fichier \textit{pageranknonmem.cpp}. On a comparé les temps d'exécutions pour 20 itérations pour les 2 graphes ci-dessous:
+\begin{center}
+  \begin{tabular}{|l|l|l|l|}
+    \hline
+    Graphe & n & m & temps\\
+    \hline
+    Wikipédia (ss-ensemble) & 2 millions & 11 millions & 172s\\
+    \href{http://konect.uni-koblenz.de/networks/wikipedia_link_en}{Wikipedia} & 12millions & 378 millions & 2h10min\\
+    \hline
+  \end{tabular}
+\end{center}
+Malheureusement, par souci de temps, on n'a pas pu réaliser les calculs sur le graphe de Twitter (MPI) qui possède presque 2milliards de noeuds. On peut extrapoler que les calculs auraient duré au moins 10h, et malheureusement je peux rarement laisser mon PC occupé aussi longtemps sans en avoir besoin.
+
+\section{Personnalized PageRank}
+On a aussi implémenté (dans le fichier \textit{perspagerank.cpp}) le Personnalized PageRank. On le teste en Rooted PageRank avec comme point de départ la page wikipédia de la France, et $alpha = 0.2$. On obtient alors les résultats suivants:
+
+\begin{center}
+  \begin{tabular}{|l|l|}
+    \hline
+    Rang & Page\\
+    \hline
+    $1$ & France\\
+    $2$ & United States\\
+    $3$ & Mathematics\\
+    $4$ & United Kingdom\\
+    $5$ & Germany\\
+    \hline
+  \end{tabular}
+\end{center}
+
+On remarque que les Etats Unis font leur retour, cette fois ci en deuxième position derrière notre point de départ. Les autres résultats sont assez cohérents (en dehors des mathématiques) puisque le Royaume-Uni et l'Allemagne sont voisins de la France, et donc sûrement souvent référencés depuis les pages concernant la France.
 
 \end{document}
