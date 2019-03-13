@@ -56,13 +56,12 @@ adjArray *loadAsAdjArray(char *fn, int n, int m, std::map<unsigned int, unsigned
   arr->n = n; arr->m = m;
   int *degs = degrees(fn, n, map);
   arr->cd = (unsigned int *)malloc((n+1)*sizeof(unsigned int)); arr->cd[0] = 0;
-  int i;
-  for(i = 0; i < n; i++) arr->cd[i+1] = degs[i]+arr->cd[i];
+  for(int i = 0; i < n; i++) arr->cd[i+1] = degs[i]+arr->cd[i];
   arr->adj = (unsigned int*)malloc(arr->cd[n]*sizeof(unsigned int));
-  for(i = 0; i < arr->cd[n]; i++) arr->adj[i] = 0;
+  for(int i = 0; i < arr->cd[n]; i++) arr->adj[i] = 0;
 
   int *indexes = (int *) malloc(n*sizeof(int));
-  for(i = 0; i < n; i++) indexes[i] = 0;
+  for(int i = 0; i < n; i++) indexes[i] = 0;
 
   FILE *f = fopen(fn, "r");
   char line[128];

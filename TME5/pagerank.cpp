@@ -14,9 +14,9 @@ void matVectProd(adjArray *arr, double *P) {
   double *B = (double *)malloc(arr->n*sizeof(double));
   for(int i = 0; i < arr->n; i++) B[i] = 0;
   for(int i = 0; i < arr->n; i++) {
+    int deg = (arr->cd[i+1]-arr->cd[i]);
     for(int j = arr->cd[i]; j < arr->cd[i+1]; j++) {
       int nj = arr->adj[j];
-      int deg = (arr->cd[i+1]-arr->cd[i]);
       B[nj] += P[i]/(double)deg;
     }
   }
@@ -29,7 +29,7 @@ void normalize2(double *P, int n) {
   double norme = 0;
   for(int i = 0; i < n; i++) norme += P[i];
   for(int i = 0; i < n; i++) {
-    P[i] += (1-norme)/(double)n;
+    P[i] += (1.-norme)/(double)n;
   }
 }
 
@@ -73,7 +73,7 @@ int main(int argc, char **argv) {
   adjArray *arr = loadAsAdjArray(inName, nbNodes, nbEdges, map);
   printf("Loaded graph\n");
 
-  double *ranks = pagerank(arr, 0.2, 20);
+  double *ranks = pagerank(arr, 0.15, 20);
   printf("Calculated ranks\n");
 
   std::vector<std::pair<unsigned int, double>> rankMap(arr->n);
@@ -91,12 +91,12 @@ int main(int argc, char **argv) {
 
   printf("Top 5:\n");
   for(int i = 0; i < 5; i++) {
-    printf("%d\n", rankMap[i].first);
+    printf("%d: %.15g\n", rankMap[i].first, rankMap[i].second);
   }
 
   printf("Flop 5:\n");
   for(int i = 0; i < 5; i++) {
-    printf("%d\n", rankMap[arr->n-(i+1)].first);
+    printf("%d: %.15g\n", rankMap[arr->n-(i+1)].first,  rankMap[arr->n-(i+1)].second);
   }
 
   freeAdjArray(arr);

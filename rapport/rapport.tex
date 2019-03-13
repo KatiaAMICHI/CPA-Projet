@@ -197,11 +197,11 @@ Les 5 pages avec le plus haut PageRank du graphe (par PageRank décroissant) son
     \hline
     Rang & Page & PageRank\\
     \hline
-    $1$ & United States & $2.17\mathrm{e}{-3}$\\
-    $2$ & Square Kilometer & $1.41\mathrm{e}{-3}$\\
-    $3$ & Population Density & $1.32\mathrm{e}{-3}$\\
-    $4$ & Square mile & $1.29\mathrm{e}{-3}$\\
-    $5$ & United States Census Bureau & $1.23\mathrm{e}{-3}$\\
+    $1$ & United States & $3.64\mathrm{e}{-3}$\\
+    $2$ & United Kingdom & $1.59\mathrm{e}{-3}$\\
+    $3$ & Germany & $1.36\mathrm{e}{-3}$\\
+    $4$ & 2007 & $1.36\mathrm{e}{-3}$\\
+    $5$ & 2006 & $1.26\mathrm{e}{-3}$\\
     \hline
   \end{tabular}
 \end{center}
@@ -213,16 +213,15 @@ D'autre part, les pages avec les rangs les plus faibles (par PageRank croissant)
     \hline
     Rang & Page & PageRank\\
     \hline
-    $n$ & Joseph Ashton & $5.66\mathrm{e}{-7}$\\
-    $n-1$ & Pachypodium lamerei & $5.66\mathrm{e}{-7}$\\
-    $n-2$ & James Dobbin & $5.66\mathrm{e}{-7}$\\
-    $n-3$ & Abipón language & $5.66\mathrm{e}{-7}$\\
-    $n-4$ & Operation Amherst & $5.66\mathrm{e}{-7}$\\
+    $n$ & I Have Dreamed & $7.31\mathrm{e}{-8}$\\
+    $n-1$ & I Have Dreamed (album) & $7.31\mathrm{e}{-8}$\\
+    $n-2$ & The Other Side of Life (Sound Pollution and Rotting Christ split album) & $7.31\mathrm{e}{-8}$\\
+    $n-3$ & History of Bayern Munich & $7.31\mathrm{e}{-8}$\\
+    $n-4$ & Marguerite Jeanne Carpentier & $7.31\mathrm{e}{-8}$\\
     \hline
   \end{tabular}
 \end{center}
-
-On constate que dans, le cas des pages de PageRank fort, les pages sont fortement liées entre elles. En effet les pages Square Kilometer, Population Density, ... sont toutes référencées par la page United States, mais elles sont aussi référencées par beaucoup d'autres pages (sans doute la plupart des pages à contenu géographique), ce qui ajoute à leurs importances. Dans le cas des pages de PageRank faible en revanche, on observe pas de lien à priori entre les pages: ce sont simplement des pages peu (voir pas) référencées.\\
+On remarque que les ``flops 5'' ont tous le même score, et le classement dépend donc surtout de l'algorithme de tri utilisé.
 
 On a obtenu ces résultats avec 20 itérations du PageRank, et on constate qu'augmenter le nombre d'itérations ne change pas les résultats, 20 semble donc être une bonne valeur.
 
@@ -254,8 +253,8 @@ On a implémenté la version du PageRank utilisant moins de mêmoire (mais devan
     \hline
     Graphe & n & m & temps\\
     \hline
-    Wikipédia (ss-ensemble) & 2 millions & 11 millions & 172s\\
-    \href{http://konect.uni-koblenz.de/networks/wikipedia_link_en}{Wikipedia} & 12millions & 378 millions & 2h10min\\
+    Wikipédia (ss-ensemble) & 2 millions & 11 millions & 18min\\
+    \href{http://konect.uni-koblenz.de/networks/wikipedia_link_en}{Wikipedia} & 12 millions & 378 millions & 2h10min\\
     \hline
   \end{tabular}
 \end{center}
@@ -271,13 +270,13 @@ On a aussi implémenté (dans le fichier \textit{perspagerank.cpp}) le Personnal
     \hline
     $1$ & France\\
     $2$ & United States\\
-    $3$ & Mathematics\\
-    $4$ & United Kingdom\\
+    $3$ & United Kingdom\\
+    $4$ & Paris\\
     $5$ & Germany\\
     \hline
   \end{tabular}
 \end{center}
 
-On remarque que les Etats Unis font leur retour, cette fois ci en deuxième position derrière notre point de départ. Les autres résultats sont assez cohérents (en dehors des mathématiques) puisque le Royaume-Uni et l'Allemagne sont voisins de la France, et donc sûrement souvent référencés depuis les pages concernant la France.
+On remarque que les Etats Unis font leur retour, cette fois ci en deuxième position derrière notre point de départ. Les autres résultats sont assez cohérents, puisque directement l'Angleterre et l'Allemagne, en plus d'avoir un pagerank important (comme on l'a vu dans l'exercice 1) sont voisins de la France.
 
 \end{document}
