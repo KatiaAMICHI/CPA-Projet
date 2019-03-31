@@ -1,4 +1,5 @@
-\documentclass[a4paper]{report}
+\documentclass{report}
+\usepackage[a4paper, margin=1in]{geometry}
 
 \usepackage[utf8]{inputenc}
 \usepackage[francais]{babel}
@@ -42,27 +43,29 @@ On constate que le temps d'exécution pour le graphe de friendster est très imp
 \subsection*{Degree distribution}
 On trouvera ci-dessous les distributions de degrés pour les cinq graphes proposés.
 \begin{center}
-  \includegraphics[height=.25\paperwidth]{assets/email-EU-core-dist.png}
-  \includegraphics[height=.25\paperwidth]{assets/com-amazon-dist.png}
-  \includegraphics[height=.25\paperwidth]{assets/com-lj-dist.png}
-  \includegraphics[height=.25\paperwidth]{assets/com-orkut-dist.png}\\
+  \includegraphics[height=.3\paperwidth]{assets/email-EU-core-dist.png}
+  \includegraphics[height=.3\paperwidth]{assets/com-amazon-dist.png}
+  \includegraphics[height=.3\paperwidth]{assets/com-lj-dist.png}
+  \includegraphics[height=.3\paperwidth]{assets/com-orkut-dist.png}\\
 \end{center}
 On constate qu'il y a énormément de noeuds avec un degré très faible, et très peu avec un fort degré (ce qui était une propriété predictible des graphes de terrains).
 
 \section{Load a graph in memory}
 On trouvera ci-dessous la taille en mémoire mesurée pour les trois structures de données et les cinq graphes proposés.
 
-\begin{tabular}{|l|l|l|l|}
-  \hline
-  G & egde list & adjacency matrix & adjacency array \\
-  \hline
-  email-EU-core & 133ko & 4Mo & 70ko \\
-  Amazon & 7Mo & Trop & 5Mo \\
-  LiveJournal & 270Mo & Trop & 154Mo \\
-  Orkut & 1Go & Trop & 500Mo \\
-  Friendster & Trop & Trop & Trop \\
-  \hline
-\end{tabular}\\
+\begin{center}
+  \begin{tabular}{|l|l|l|l|}
+    \hline
+    G & egde list & adjacency matrix & adjacency array \\
+    \hline
+    email-EU-core & 133ko & 4Mo & 70ko \\
+    Amazon & 7Mo & Trop & 5Mo \\
+    LiveJournal & 270Mo & Trop & 154Mo \\
+    Orkut & 1Go & Trop & 500Mo \\
+    Friendster & Trop & Trop & Trop \\
+    \hline
+  \end{tabular}
+\end{center}
 On constate très vite que la structure matrice d'adjacence est impraticable pour de tels graphes, puisque sa taille croit quadratiquement par rapport au nombre de noeuds du graphes (on peut calculer par exemple que pour le graphe Amazon, le plus petit de nos grands graphes, sa taille serait de $n^2 \times sizeof(int)$, soit sur mon architecture $334863^2 \times 4 \simeq 450Go$). Pour ce qui est des autres structures de données, on constate que le centerau d'adjacence est un peu plus efficace que la liste d'aretes (d'un facteur 2). Etant donné que cette structure propose aussi une meilleure efficacité pour beaucoup de problèmes, on aura tendance à la préférer dans la suite, sauf cas particulier.\\
 Dans le cas particulier du graphe de Friendster, le graphe est trop grand pour tenir dans la RAM de mon ordinateur porcenter, quelque soit la structure de données utilisée. On note que la taille thèorique de l'adjacency array pour ce graphe serait de l'ordre de $2\times m \times sizeof(unsigned\,int)$ soit sur mon architecture $2 \times 1806067135 \times 4 \simeq 14.5Go$. Cela nous fait une raison de plus pour ignorer ce graphe dans les prochaines questions.
 
@@ -103,7 +106,7 @@ On prends seulement en compte dans le temps d'exécution la partie calcul de tri
     \hline
     G & nombre de triangles & temps d'exécutation & transitivity & clustering\\
     \hline
-    email-EU-core & 107124 & 68ms & 0.128 & 0.310\\
+    email-EU-core & 105461 & 68ms & 0.128 & 0.310\\
     Amazon & 667129 & 635ms & 0.094 & 0.276\\
     LiveJournal & 177820130 & 200s & 0.032 & 0.22\\
     Orkut & 627584181 & 28min & 0.0145 & 0.125920\\
@@ -313,10 +316,10 @@ On utilise maintenant l'algorithme simple donné dans la slide 17 du cours pour 
     \hline
     G & highest density & avg degree density & avg edge density & size\\
     \hline
-    email-EU-core & 57.6 & 42.8 & 0.39 & 223\\
-    Amazon & 9.9 & 7.23 & 0.01 & 334863\\
-    LiveJournal & 395.8 & 191.38 & 0.21 & 1820 \\
-    Orkut & 483.8 & 228.22 & 0.015 & 30161 \\
+    email-EU-core & 28.8 & 27.4 & 0.21 & 253\\
+    Amazon & 4.95 & 3.92 & 0.001 & 9977 \\
+    LiveJournal & 197.9 & 190.9 & 0.21 & 1820 \\
+    Orkut & 241.9 & 227 & 0.015 & 29608 \\
     \hline
   \end{tabular}
 \end{center}
@@ -327,14 +330,29 @@ Et pour $t = 100$: (au dela de $t = 100$ les résultats semblent assez stable, o
     \hline
     G & highest density & avg degree density & avg edge density & size\\
     \hline
-    email-EU-core & 55.4 & 47.88 & 0.62 & 154 \\
-    Amazon & 9.64 & 7.19 & 0.01 & 334863 \\
-    LiveJournal & 387.53 & 193.5 & 0.38 & 1017 \\
-    Orkut & 458.83 & 230.1 & 0.017 & 26527 \\
+    email-EU-core & 27.7 & 27.6 & 0.24 & 228 \\
+    Amazon & 4.82 & 4.8 & 0.1 & 96 \\
+    LiveJournal & 193.7 & 193.2 & 0.38 & 1015 \\
+    Orkut & 229.2 & 227 & 0.017 & 26528 \\
     \hline
   \end{tabular}
 \end{center}
 
-On remarque que cet algorithme est bien plus efficace que le précédant : en effet, dans beaucoup de cas (et surtout pout $t = 100$ l'average degree density obtenue est presque 2 fois supérieurer à celle obtenue avec l'algorithme précédant (qui était une 2-approximation). On remarque d'ailleurs que le density score du meilleur noeud est également de l'ordre de 2 fois l'average degree density obtenu avec l'algorithme précédant.
+On remarque que cet algorithme est un peu plus efficace que le précédent pour $t = 100$: l'average degree density obtenue est un peu supérieure à celle obtenue avec l'algorithme précédant (qui était une 2-approximation). On remarque d'ailleurs que le density score est tres proche (mais toujours supérieur) a l'average degree density (ce qui est normal puisque c'est une borne supérieure).
+
+\section{Triangle densest prefix}
+On va maintenant calculer le densest prefix en fonction des triangles plutot que des aretes. Pour ce faire, on on itère sur les triangles plut que sur les aretes. Malheureusement, le nombre de triangles étant très grand, on ne peut les trocket en mémoire et on doit donc les recalculer à chaque itération. On obtient alors pour $t = 100$ les résultats suivants:
+\begin{center}
+  \begin{tabular}{|l|l|l|l|l|}
+    \hline
+    G & avg degree density & avg edge density & size\\
+    \hline
+    email-EU-core & & & \\
+    Amazon & & & \\
+    LiveJournal & & & \\
+    Orkut & & & \\
+    \hline
+  \end{tabular}
+\end{center}
 
 \end{document}
