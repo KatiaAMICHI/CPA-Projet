@@ -14,7 +14,9 @@ for filename in args.files:
             tab = line[:-1].split(" ")
             x+=[int(tab[0])]; y+=[float(tab[1])]
 
-plt.bar(x, y, label=filename.split("/")[1].split(".")[0])
+plt.yscale("log")
+plt.xscale("log")
+plt.plot(x, y, label=filename.split("/")[1].split(".")[0])
 plt.xlabel("Degré")
 plt.ylabel("Nombres de noeuds")
 plt.legend()
